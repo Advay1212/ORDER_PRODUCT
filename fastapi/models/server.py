@@ -10,16 +10,16 @@ import crud
 
 app = FastAPI(title="Products & Orders API")
 
-# Create database tables
+# Create database tables automatically on startup
 create_tables()
 
-# CORS middleware configured for production
+# CORS configuration for production
+# This allows your specific Render frontend to communicate with this backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://order-product-frontend.onrender.com" # Your live frontend URL
+        "https://order-product-frontend.onrender.com"  # Added live frontend URL (no trailing slash)
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -98,7 +98,7 @@ def get_order(order_id: int, db: Session = Depends(get_db)):
 
 if __name__ == "__main__":
     import uvicorn
-    # Use the PORT environment variable provided by Render, defaulting to 8003 for local development
-    port = int(os.environ.get("PORT", 8003))
-    # Host changed to 0.0.0.0 to accept external traffic on Render
+    # Use the dynamic PORT environment variable provided by Render
+    port = int(os.environ.get("PORT", 8003)) 
+    # Must listen on "0.0.0.0" to accept external traffic on Render
     uvicorn.run(app, host="0.0.0.0", port=port)
