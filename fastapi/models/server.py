@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
+import os
 
 from db_config import get_db, create_tables
 from schemas import Product, ProductCreate, ProductUpdate, Order, OrderCreate
@@ -12,13 +13,13 @@ app = FastAPI(title="Products & Orders API")
 # Create database tables
 create_tables()
 
-# CORS middleware
+# CORS middleware configured for production
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "http://localhost:3001"
+        "https://order-product-frontend.onrender.com" # Your live frontend URL
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -97,4 +98,7 @@ def get_order(order_id: int, db: Session = Depends(get_db)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8003)
+    # Use the PORT environment variable provided by Render, defaulting to 8003 for local development
+    port = int(os.environ.get("PORT", 8003))
+    # Host changed to 0.0.0.0 to accept external traffic on Render
+    uvicorn.run(app, host="0.0.0.0", port=port)
