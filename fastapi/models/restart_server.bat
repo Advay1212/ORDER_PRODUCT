@@ -1,0 +1,2 @@
+@echo off
+echo Stopping any existing servers...\ntaskkill /f /im python.exe 2>nul\necho.\necho Starting fresh FastAPI server...\ncd /d c:\\Users\\Advay\\Desktop\\Advay\\fastapi\\models\npython server.py\npause
